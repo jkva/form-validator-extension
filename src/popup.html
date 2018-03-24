@@ -7,43 +7,214 @@
   <meta name="description" content="A browser extension to confirm all form inputs being submitted, in a simplified presentation mode">
   <meta name="author" content="John Foliot - Deque Systems Inc.">
 
-  <script src="./popup.js"></script>
+  <script src="popup.js"></script>
 
   <style>
     body {width:300px; font-family: arial, helvetica, sans-serif; font-size:70%;}
-    h1 {background-color:#082545; color:#fff; height:55px; border:10px solid #082545; padding-top:25px;}
-    legend {font-weight: bold;}
-    .important {padding:.3em; border: red 2px solid;}
+    h1 {background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHlSURBVGhD7ZlNSwJBGMf9Gn2fLl2tjxB061aHrgVdKijqEvRyCYLoEBqBb5hrQVRU9iK97JYGGqiUFO7LrE4ztocd3WXRmd2mmD/8Ls7wzPOTdWYHQyIiIiIi3CQhg5GYbBzEFCPOFainuAyGrTa9E1OAFFcA5BHUW8Zq0zuci0hWm94RIgEgRHgjcJHzsgnvKk0qbhHpF7Iulchi9gNORSuuzKfficUOCwC2IJsU602iNpVIeLUAByZzrgwtK8RiUhFYbdCn/NkialOJjO++wcEl2ZWx7RKxWIahSImlSK8kEK/okag1WlRUEaclk6gdqIifCJF+SaFtM1s0qcCbRmddKpHovQ738porkQedWAxLGKb1a6XMY01sv/9YpFeSzwA2AJuzPV9l+Gj1Az5L8HsSDSn0hXTWDVzEL4QIb1CJLJxocCKpOoLH7HP9hkpkWtLg6H7DETxmn+s3TETWL1WYK+tttq5/PrOLbJx9Ob7m04CvEPZemIhE7jVoGEabhNItsnJcdzwwacCHsb2XQER2blTHqzAN+Jpt74WJyExWhZtXWpvZI7VLJAiYiDjxp0TWLnQ4h7ZZJ/CYfa7fUInwhBDhjV5FMk5FeAD3ZrXpHZ7/eos9gbDVpoiIiIjIbycU+gYcUMCt8A4E8gAAAABJRU5ErkJggg==);
+            background-repeat: no-repeat;
+            background-position: right;
+            background-color: #082545;
+            color: #fff;
+            height: 3em;
+            border: 10px solid #082545;
+            padding-right: 40px;
+        margin-bottom:10px;
+        border-radius: 10px;
+}
+        fieldset {margin-top:-20px; margin-bottom:5px;}
+    legend {font-weight: bold; margin-left:40px;}
+    li {padding:.1em; }
+footer {font-size:60%; text-align:right;}
+    .important {border: black 1px solid; background-color:#ff9;}
+        .icon {height:30px; width:30px; margin-left:10px;}
+    .warning {border: red 1px solid; color: red; font-weight:bold; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAEnQAABJ0BfDRroQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEnSURBVDiNlZK9SgNBFIW/O8Q0yTsoKQQLxSJZCVbuKlY2PoEgSETwp7LQzh9srawCeRG3EZvkAQRBiK+gm0BWmWsRkM0ws+KBrc75ztw7O1CicRK1Pzaa62UZEzJGcdSx8GyMefpMWsf/Ksji6FyFB0AAEeR+FEcXvqz4YIQ7b1i5rKX9m+AELlw9PKXaOfn1Vbh2JzEhGMDMNzALjZkp3BJTOnaeTz9HxRKTbbVWEW59O+vXBM0nPgsVrsZxM6rwLRr8mXkOqgETVERlukJrD5EuzqWaxSUA7OuLy1qBg9pjv2sA6umgh+o+YIupSrLN3M5uEKZ4oq/Evg+xw7cgDN6H5F/HB3sLAiVeeGaFourpoCfKEaCAKnrmg/9UttlezpK1lbLMD4PXe9pTc8obAAAAAElFTkSuQmCC);
+            background-repeat: no-repeat; background-position:right; height:1em!important; width:20px; padding-right: 80px;}
+
+
+    body .category,
+    body .category li,
+    body h1 {
+        display: none;
+    }
+
+    #no-autocomplete-input-fields-message {
+        display: block;
+    }
+
+    .with-autocomplete-inputs h1 {
+        display: block;
+    }
+
+    .with-autocomplete-inputs #no-autocomplete-input-fields-message {
+        display: none;
+    }
+
+    .with-autocomplete-about-you #about-you,
+    .with-autocomplete-credit-card #credit-card,
+    .with-autocomplete-contact-you #contact-you,
+    .with-autocomplete-at-home #at-home,
+    .with-autocomplete-by-phone #by-phone,
+    .with-autocomplete-more-details #more-details {
+        display: block;
+    }
+
+    .with-autocomplete-name .name,
+    .with-autocomplete-honorific-prefix .honorific-prefix,
+    .with-autocomplete-given-name .given-name,
+    .with-autocomplete-additional-name .additional-name,
+    .with-autocomplete-family-name .family-name,
+    .with-autocomplete-honorific-suffix .honorific-suffix,
+    .with-autocomplete-nickname .nickname,
+    .with-autocomplete-username .username,
+    .with-autocomplete-new-password .new-password,
+    .with-autocomplete-current-password .current-password,
+    .with-autocomplete-organization-title .organization-title,
+    .with-autocomplete-organization .organization,
+    .with-autocomplete-street-address .street-address,
+    .with-autocomplete-address-line1 .address-line1,
+    .with-autocomplete-address-line2 .address-line2,
+    .with-autocomplete-address-line3 .address-line3,
+    .with-autocomplete-address-level4 .address-level4,
+    .with-autocomplete-address-level3 .address-level3,
+    .with-autocomplete-address-level2 .address-level2,
+    .with-autocomplete-address-level1 .address-level1,
+    .with-autocomplete-country .country,
+    .with-autocomplete-country-name .country-name,
+    .with-autocomplete-postal-code .postal-code,
+    .with-autocomplete-language .language,
+    .with-autocomplete-bday .bday,
+    .with-autocomplete-bday-day .bday-day,
+    .with-autocomplete-bday-month .bday-month,
+    .with-autocomplete-bday-year .bday-year,
+    .with-autocomplete-sex .sex,
+    .with-autocomplete-url .url,
+    .with-autocomplete-photo .photo,
+    .with-autocomplete-tel .tel,
+    .with-autocomplete-tel-country-code .tel-country-code,
+    .with-autocomplete-tel-national .tel-national,
+    .with-autocomplete-tel-area-code .tel-area-code,
+    .with-autocomplete-tel-local .tel-local,
+    .with-autocomplete-tel-local-prefix .tel-local-prefix,
+    .with-autocomplete-tel-local-suffix .tel-local-suffix,
+    .with-autocomplete-tel-extension .tel-extension,
+    .with-autocomplete-email .email,
+    .with-autocomplete-impp .impp,
+    .with-autocomplete-cc-name .cc-name,
+    .with-autocomplete-cc-given-name .cc-given-name,
+    .with-autocomplete-cc-additional-name .cc-additional-name,
+    .with-autocomplete-cc-family-name .cc-family-name,
+    .with-autocomplete-cc-number .cc-number,
+    .with-autocomplete-cc-exp .cc-exp,
+    .with-autocomplete-cc-exp-month .cc-exp-month,
+    .with-autocomplete-cc-exp-year .cc-exp-year,
+    .with-autocomplete-cc-csc .cc-csc,
+    .with-autocomplete-cc-type .cc-type,
+    .with-autocomplete-transaction-currency .transaction-currency,
+    .with-autocomplete-transaction-amount .transaction-amount {
+        display: block;
+    }
+
   </style>
 </head>
 
 <body>
-<h1>This form is asking for the following information:</h1>
+    <h1 id="no-autocomplete-input-fields-message">This form is not requiring any information.</h1>
 
+    <h1>This form is asking for the following information:</h1>
+
+    <p>Any of the following items marked with this icon <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAEnQAABJ0BfDRroQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEnSURBVDiNlZK9SgNBFIW/O8Q0yTsoKQQLxSJZCVbuKlY2PoEgSETwp7LQzh9srawCeRG3EZvkAQRBiK+gm0BWmWsRkM0ws+KBrc75ztw7O1CicRK1Pzaa62UZEzJGcdSx8GyMefpMWsf/Ksji6FyFB0AAEeR+FEcXvqz4YIQ7b1i5rKX9m+AELlw9PKXaOfn1Vbh2JzEhGMDMNzALjZkp3BJTOnaeTz9HxRKTbbVWEW59O+vXBM0nPgsVrsZxM6rwLRr8mXkOqgETVERlukJrD5EuzqWaxSUA7OuLy1qBg9pjv2sA6umgh+o+YIupSrLN3M5uEKZ4oq/Evg+xw7cgDN6H5F/HB3sLAiVeeGaFourpoCfKEaCAKnrmg/9UttlezpK1lbLMD4PXe9pTc8obAAAAAElFTkSuQmCC"> is attempting to gather this informationwithout your knowledge. <strong>You probably should not submit this form.</strong></p>
+
+ <div class="category" id="about-you">
+<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARkSURBVGhD7ZhvaJtVFMYz1g5hTlCYsFpnP7SlFRwbbbGKNG2TtEnTpI42DLcyraNjE/9QEGc3EVxm/RAcbtN1dXRE1MZlq/vTrp1D3ZZ0RbETEWEfVIqgsjnHwmzfaAf3eO7bk+59k5uStMlNlDzwo+l7z33Oc26SN2kNOeWUk3zV1dVV1NfXu/Hnp8g4Pp6IgL83UFn2CkM+jlzGwBAPXP+ayrNTGPJ1hGlDz8MgDrTRaDTeRduzQxisJypoQuAwv5hMJivZZFa1tbV2DJXoMyHiNnq0kl1m5HK5luGp/ioIlxToETKbzQVkK18Y4FlRsHg0W+uh5/kGeLnDIlr3kK18YfNLUWFiiIS/dMAGM8MOgFEH/DPkgB1b9MPgofxGtnJlsViWm/D1rQ0TQRQ+GtEweBcrJnt5whOs0YZIJHw0gmFsZC9P/E7Dm3e4zEmFj4YPs22jWR0ED2cz2csTNt3Km7+Jz4IoYDJwDxpkO9nLE2/6vxjE3lj7UqoH4Z5kL0fs6MP33egvm3xxU03MINd9DaCcbNJd0zJ9ogmuD+j3cI+u9hq4eaTsZ+5NbdIv5ivdAr5SmPFXQXD/ndAhfyPstBZAb0eJLqiWg88UqzWhY9a5a9zj9rEq4J7cm9qkX2yg1MqbwmClLuTMkB2828rhyzf017XwNe/2crVWt8a9+CADxRZqI0fMV7KLDVZM6sIsAna8cpINlHSTvVzBZ/YKUaiFwEac68hWvuC8MY+NOG6IgiUDG2n+E/yupWSbGbHR5j5RuGTAwzhEdpkTG256CIOERQETge9lZ1seJLvMCsO8IAqZCPiyeo5sskNs1OERBZ0Pvoe2Z5fYYPVbMHLngy4uWMNOPNpD27JP0Gd4At7PVz/Y4LQxdoBTeI2v8RqspW3ZJ3WQQwaYoy8PoP/uWfhj3dp/aZD5yMZB1hz87v6iPRf2rnnFe4X1LhEH18BrHtnxwZUi94W9a/d9u5JsMqfmoLK6JaD02j6/ObX0qX5YsuEw+Hfjlz9BeC2f7K5Sa/ke27nQLfQ4sP7i1CqylSfXD7DMGVRecwYUpSUYBs6qV8+q4Qqffhv+2L9COACHrz2ANby2oHtU3ctBv7/Qb9fWCcinNulVW+DWSmcgHIgEiGA6fQ3y271qwPION1z2rI4Z4htPEZThGq/htaahazqPWZQv2sZD6f3jyjEeLsaTm4xtPkv1hz9BXvsRNSjnsc5u6OzarFLduXPuOq/htSIPlYDy4/rz04XUNrWyB0P38gbCxhrqTv4OhV1H50JHU9jlV2tEe7XggX3vHGMrqH3q1BIIe0UN49E4fBVa3/kI2tweldZ9H0PDmavC2njgMIepfWrkHJuuxGeDiZqlFd5zbGotxVi8nMHwcWEjOfgoxuJk/Yrdg3eSsKCBHALKdEreK08G/7YJG8jkYriR4ixc/ENKaC4RR1BZ/H9X8M7xnshcKgHlXYqzcKHRHnyzT2QSvPW7KU5OOeW0IBkM/wL9v1qimtMQvAAAAABJRU5ErkJggg==">
 <fieldset> <legend>About You</legend>
   <ul>
-     <li>foo</li>
+     <li>photo</li>
+     <li>name</li>
+     <li>honorific-prefix</li>
+     <li>given-name</li>
+     <li>additional-name</li>
+     <li>family-name</li>
+     <li>honorific-suffix</li>
+     <li>nickname</li>
+     <li>organization-title</li>
+     <li>organization</li>
+     <li class="important">email</li>
+     <li class="important">current-password</li>
+     <li class="important">username</li>
   </ul>
 </fieldset>
-
+</div>
+<div class="category" id="credit-card">
+<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEvSURBVGhD7ZixSgNBFEX3kwQFCxvBwkqisbYwO50WprATBBFB/AK/wxmNoK1fYSNaWknepAg67oMnKDMusfJuuAdOtwPnEkjxKkIIIYT8wiDIkvNyVod4iaQ2aZtltqMfN364EBOk2ublxHLLuCvZKj5G1EvPsnOan29UfITpjWXn1F4eCw8g1VbLzulfhNf+uU+dsGm17JyV7d3p8novdUFttewcDvkHOQTN1iFr7iiu7hykLqitlp1TB3kq/Wcjqq2WnfM1ZG8U0/7tBFJtm3nIw8s0Pb+9Q6ptHIIkh6D5pyHDu0k6vMdU22Ye0gU5BE0OQZND0GwfMi/noLk50A2CbBYeQFpfy4Zll9EDMf4ROx5bbjvNx4suyOn3kz6C2uT8eMEyCSGEEPKTqvoE7wvDhlNyANoAAAAASUVORK5CYII=">
 <fieldset> <legend>Your Credit Card Info</legend>
   <ul>
-     <li class="important">foo</li>
+    <li>cc-name</li>
+    <li>cc-given-name</li>
+    <li>cc-additional-name</li>
+    <li>cc-family-name</li>
+    <li class="important">cc-number</li>
+    <li>cc-exp</li>
+    <li>cc-exp-month</li>
+    <li>cc-exp-year</li>
+    <li class="important">cc-csc</li>
+    <li>cc-type</li>
+    <li>transaction-currency</li>
+    <li>transaction-amount</li>
   </ul>
 </fieldset>
-
+</div>
+<div class="category" id="contact-you">
+<img class="icon" src="data:image/png;base64,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">
 <fieldset> <legend>Contacting You</legend>
-  <ul>
-     <li>foo</li>
-  </ul>
-</fieldset>
 
+<div class="category" id="at-home">
+<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPBSURBVGhD7ZhtSFNRHMYnQV/6EkGI3s0kk0SwhPCFJCRLoigKDMqEIDLwS30MoiAI+uTXiELB+hCESAQ5t2mKus3aXGX4gu8vOd1mL0a1wohO57mcez3Oc+XOl83RfeAHx3vO//9/nl3vvGgyZMhQfNUsSZmA/ZiYakxNzW2SpCDAml1OLFlTUopskjRvM5uJDF3jGttODNE7cIKaD6shFgljjx3b3Goym8/TT39BMe/I2COjhqF7OMOOb07ZUlOrqNk/iunmvVlk1NYug7UaBmfoWVamqssTvODyhB7yOF8HLrPt2Ih+0jc4o6Rl334y0dFNgnM/ZbDGNf4Mali5LLc3eN/tDREelzf0hG1vrIjJlEQNVfMGX+blkylPrxpCAdewx59FLXqgV9yC1JtMW6iRWt5Y26FiMv1+dFkIBezhDF+DHugVlyD12dlb6UPbwBtqLz1G/EN+YQAenMFZvha9XK4PD2IaxJGcvI0ObuGNOM+UkZmJOaFxETiLGr6Ho+jwtLtzMjZB7GbzDjr0FW+gq+IiCfjnhYZXAjWo5Xs1lxwnrraRjQ1iS0tLoX/QevnB3qqrJDD7TWhUD6hFD76n42AxcTn6NyZIY1rabvpQjvEDfddvkmAovMzc1Ox3Uu8cE4K9yPPogV58b8eBAuJ88XZ9g1jN5hx6J2b5QT13q5cbYrwZ/EiSztUIwZ6oBqAnP8Oek0s66qxWZmNtogEKKZ/VARYL6btXIzSisNogAL0xQ52XkbkAD8zO6mS3WErpt9MPpak9PZ0MPHoqNMCzliAAMzBLmQsP8MJsRSe7JJXRZ2LJy99wg1U4OJK1BgGYFfmyCU/Mnj7RwkrK4stfFn35s3cIB4pYjyAAMzFb8cE8VTKbK4smv0Zv5V+lGC96450+4SAt3g1/ItsvPRaCPVGNFpjNv2zK3qhHZldbVkkqUX6lWvMKyGR3v3BALIEHeJHDUG/wyOyuLJq6ojW/MDzdOy5sHA/gBZ7gjdnUp4D/q0vUMJ7AE7OnX4G5sFPULJ7AE7OnX/9tkJluHxm5UhIVqBH10iImQfzODjJ4ZGdUoEbUSwsjiKiZFkYQQS8tjCCiZloYQQS9tNhUQX7dOkvGTu6S1wkd5PedCjJxOkNeJ3SQhdvlZPxUuryOSZCB4S91fYPznXoZePa8J9K0iKGjyeoaNaJeWsATs6dfbk/Qqfy3Tw/eetsSw3pAjaiXJtQTs6dfRpAoMIJEI1pY6/YGfXrxNNgH+ssLw9GAGlEvbUK1zJ4hQ4aiksn0D+1eGKMdtE9PAAAAAElFTkSuQmCC">
+<fieldset><legend>At Your Home</legend>
+  <ul>
+     <li class="important">street-address</li>
+     <li class="important">address-line1</li>
+     <li>address-line2</li>
+     <li>address-line3</li>
+     <li>address-level4</li>
+     <li>address-level3</li>
+     <li>address-level2</li>
+     <li>address-level1</li>
+     <li>country</li>
+     <li>country-name</li>
+     <li>postal-code</li>
+</ul> </fieldset>
+</div>
+<div class="category"  id="by-phone">
+<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJ0SURBVGhD7ZjLa1NBFMZHxQc+ENFSd4Loxq17Ef8Dt+JSRLpzY6moV9TknBgXBu9MvCiUblyEolhKK4godKHgyqr4H7hQXCrig3hmcqK5mWONhSYzMD/4yGLOSb7v3juPXJVIJBKJ8CiKjcrAeWVwUWl8LAsW6POcqw0WXZ2kEO2BpOESdwWIhoeiaVHwjLsCxMC8bFoSLHFXgKQgoaFxVjYtKeggcFs2LSnsIJdl05JCDtKE47JpSSEHaVTGZNOC7A4fNBpfi8ZLgmWVX9/LHYGicUo2z9LwUt2q7ubqgMnr+8jwTy+AE82LAndyZQRovO+FsCffItvKFZFg4LAfpHqGRyPD4Fw5CL5TjcZmHo2IZu0g3ZmvpTAGkUcjQ8OVUhANPyjcMR6NiOlsCxl/VQpj8IPKqwe4IiKalUM0Pz6Xw8Ab0i6uiAgDp8pBnF6ou7UdXBERBm/2BbEr2ZP49pZWawNNdv/lhA2TZ9u5KhLs1df41A8DzweaM3cq4+5i9L4nM/CAvqPVo3tK1yZUlq3nrjWiXt9GP77kApTkFoD9XOVT3NhD48t+31+Uw1nuXEPso6ThkffjGj6SgSNc9Qd70LSn5v76lWTv3FBwr1dxxjNg8Ds9MldVK9vUqaPHUbyD/xLMu/6h0G6vI9NTdPVox+8zovEtmTndmQd9YwNpmEG62GOL3fFFQ6vVKIJY3Iok/I9ZtUYVpIuBExTovWzufzTqIBa7qhm4RvoimxxEIQTpYt+0aKzQYvBJNrui5vhbAqKz75wkLZC+CaYlXeTuQLEngyYcpTtFyzbmpFlSz5EFF+mxuvB7H0okEolEOCj1CxCBh3pePjdnAAAAAElFTkSuQmCC">
+<fieldset><legend>By Telephone</legend>
+  <ul>
+     <li class="important">tel</li>
+     <li>tel-country-code</li>
+     <li>tel-national</li>
+     <li>tel-area-code</li>
+     <li class="important">tel-local</li>
+     <li>tel-local-prefix</li>
+     <li>tel-local-suffix</li>
+     <li>tel-extension</li>
+  </ul> </fieldset></div>
+</fieldset></div>
+
+<div class="category" id="more-details">
+<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANzSURBVGhD7ZdbSFRRFIbnIYoKIkojjaALqPkWZPVS0IxNOTpGRSRkEdRLmtFFsAwrZ8p86EKRTYmVib0opSVqdlExoZysJlOni2UhYVBg0RWC/bf38TjMZR2byQn3w/nhg8OZtfb5P844oEGPHj169Oj5H2GlhoXskuEESg0VwcDny1iZYZq6Lkd4qXxeDqHCxTulkeFlkqmSwSKNDH8bVVTBUJBChou4lELlY4DqyUDN1H+C1UZ8YLej68JGQ9RlVjclXq3593CRDlRNAh7EAM44qWD3Yxi7Of2MWnX4sIrxPdQhMsHqIzeqdbXD7swYoJZJHi0AnqWEB3EW9QwC1jizV62rHdYy+we1TNKxEnhr0+STaz/aanaiuTIL3Y3Z5IwHcRb1DALe8btaVzvs3pyf1DKJhsiXzjzYctbDZDLCaBxkldWMN6055LxCKCK8o1pXOyMV+fXyELZusnoE/MndtQ7f3AcC9qQTKTm+mRRIXmlC0gqTcn3Slh6wF3YRtM79TC2T+Imw3nysSTV7yqfw8vYMM1pOJeFXTQpcxclIMhthtSTi9+t8n91QRERHta52WFtcB7lM4SfS356LFctNOJxpxr3TFqU86q0+uIotypt579znsxvSG+Ed1braGYmIuykbW9LMAeX9ETNi1ntXKpG+pm3ITF+ulGV1gQJD98RMX3OGz65UIriViP7yZUrZJlsC3EVLPBLdRUvRbE9QrpUZPuuzK5VI927g7mpPeU3EjHuP765UIoIn2+ny3ogZ/z3pRN4cBG6vpQUE4jMx478nnYjg+V5eOjlQot4CvPD72R1CShFB7SLgyiygcv4g4lrco2YFMop87bGh57oROMf/0/RC3BOfUTtSiXx8aUdG7RFMOF+IcY4C7HBYUe2IV8hypCr3JhYXYjufEbPeu9KIPHDZEXWhEIazwRF98SgePvWSkUHk3XM7IkqOkoWHI7KkEH1uVUYGkQ3VR8iiwbDpRoEcIgOv7BjroEsGg9j9In4ARlukjX/PqYKh0C7+VsIu4oxzUcsk/OFdnXbkNBSMiG5+RkgivKNaVzvMGXuNWiZ5vBjoSgsP4izqGQSsLfaqWlc77OE8C7UsE8wZk6TWHT781R3g30NGHTKaiE6cPLVmcOHWCVzoGD+gQgZEF9FJradHjx49evSEMQbDH+tTwUC1A/1fAAAAAElFTkSuQmCC">
 <fieldset> <legend>More Details About You</legend>
   <ul>
-     <li>foo</li>
+     <li>url</li>
+     <li>language</li>
+     <li>bday</li>
+     <li>bday-day</li>
+     <li>bday-month</li>
+     <li>bday-year</li>
+     <li class="warning">sex</li>
+     <li>new-password</li>
+     <li>impp</li>
   </ul>
 </fieldset>
-
-
+<footer><a href="https://icons8.com">Icon pack by Icons8</a></footer>
 </body>
 </html>

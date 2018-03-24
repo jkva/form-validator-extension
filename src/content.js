@@ -9,7 +9,7 @@ const getLabelForNode = node => {
 };
 
 const collectAutoCompleteInputs = () => {
-    const inputs = Array.from(document.querySelectorAll('input[autocomplete]'));
+    const inputs = Array.from(document.querySelectorAll('input[autocomplete]:not([type="hidden"])'));
 
     return inputs.map(node => ({
         field : node.getAttribute('autocomplete'),
@@ -25,7 +25,6 @@ chrome.runtime.onMessage.addListener(
 
         if (request.message && request.message === 'POPUP_OPENED') {
             const autoCompleteInputs = collectAutoCompleteInputs();
-            console.debug(autoCompleteInputs);
             sendResponse(JSON.stringify({ autoCompleteInputs }));
         }
     }
