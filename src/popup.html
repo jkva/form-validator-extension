@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Form Confirmer</title>
+  <meta name="description" content="A browser extension to confirm all form inputs being submitted, in a simplified presentation mode">
+  <meta name="author" content="John Foliot - Deque Systems Inc.">
+
+  <script src="./popup.js"></script>
+
+  <style>
+    body {width:300px; font-family: arial, helvetica, sans-serif; font-size:70%;}
+    h1 {background-color:#082545; color:#fff; height:55px; border:10px solid #082545; padding-top:25px;}
+    legend {font-weight: bold;}
+    .important {padding:.3em; border: red 2px solid;}
+  </style>
+</head>
+
+<body>
+<h1>This form is asking for the following information:</h1>
+
+<fieldset> <legend>About You</legend>
+  <ul>
+     <li>foo</li>
+  </ul>
+</fieldset>
+
+<fieldset> <legend>Your Credit Card Info</legend>
+  <ul>
+     <li class="important">foo</li>
+  </ul>
+</fieldset>
+
+<fieldset> <legend>Contacting You</legend>
+  <ul>
+     <li>foo</li>
+  </ul>
+</fieldset>
+
+<fieldset> <legend>More Details About You</legend>
+  <ul>
+     <li>foo</li>
+  </ul>
+</fieldset>
+
+
+</body>
+</html>

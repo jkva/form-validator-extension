@@ -4,17 +4,26 @@
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "Creating consistent UI for common element types",
+
   "permissions": [
      "tabs",
+     "activeTab",
      "<all_urls>"
   ],
+
+  "background": {
+    "scripts": ["events.js"],
+    "persistent": false
+  },
+
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "all_frames": true,
-      "js": ["content.js"],
-      "run_at": "document_idle",
-      "match_about_blank": true
+      "matches": [ "<all_urls>" ],
+      "js": ["content.js"]
     }
-  ]
+  ],
+
+  "browser_action": {
+    "default_popup": "popup.html"
+  }
 }
