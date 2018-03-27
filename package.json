@@ -1,5 +1,5 @@
 {
-  "name": "cogsistency",
+  "name": "form-validator",
   "version": "0.0.1",
   "description": "Consistent UI for common elements",
   "main": "index.js",

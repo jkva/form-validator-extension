@@ -28,14 +28,14 @@ const onPopup = response => {
         categoryByField[node.textContent] = getCategoriesByField(node);
     });
 
-    console.debug(categoryByField);
-
     inputs.forEach(input => {
         document.body.classList.add('with-autocomplete-' + input.field);
         categoryByField[input.field].forEach(
             category => document.body.classList.add('with-autocomplete-' + category)
         );
     });
+
+    document.body.focus();
 };
 
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {

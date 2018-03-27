@@ -8,13 +8,27 @@ const getLabelForNode = node => {
     return null;
 };
 
+const detectOffscreen = node => {
+    const nodeRect = node.getBoundingClientRect();
+
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+
+    if (nodeRect.left < 0 || nodeRect.top < 0) {
+        return true;
+    }
+
+    return false;
+};
+
 const collectAutoCompleteInputs = () => {
     const inputs = Array.from(document.querySelectorAll('input[autocomplete]:not([type="hidden"])'));
 
     return inputs.map(node => ({
         field : node.getAttribute('autocomplete'),
         label : getLabelForNode(node),
-        value : node.value
+        value : node.value,
+        offscreen: detectOffscreen(node)
     }));
 };
 

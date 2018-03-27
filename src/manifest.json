@@ -1,9 +1,9 @@
 {
-  "name": "Cogsistency",
-  "short_name": "Cogsistency",
+  "name": "Form Validator",
+  "short_name": "Form Validator",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "Creating consistent UI for common element types",
+  "description": "Provide analysis of form autocomplete usage",
 
   "permissions": [
      "tabs",
